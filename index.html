@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Career Growth — Follow-Up Automation</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#060d1a;font-family:Georgia,serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;}
+@keyframes spin{to{transform:rotate(360deg);}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.spinner{width:46px;height:46px;border:3px solid rgba(255,255,255,0.07);border-top-color:#d4a830;border-radius:50%;animation:spin 0.9s linear infinite;margin:0 auto;}
+input:focus,textarea:focus{outline:none;border-color:rgba(212,168,48,0.7)!important;box-shadow:0 0 0 3px rgba(212,168,48,0.1);}
+button{transition:filter 0.15s,transform 0.15s;cursor:pointer;}
+button:hover:not(:disabled){filter:brightness(1.12);}
+.dz:hover{border-color:rgba(212,168,48,0.5)!important;background:rgba(212,168,48,0.05)!important;}
+.card{width:100%;max-width:680px;margin:28px 16px;background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.08);border-radius:20px;overflow:hidden;}
+.card-header{display:flex;align-items:center;gap:12px;padding:18px 22px;background:rgba(0,0,0,0.3);border-bottom:1px solid rgba(255,255,255,0.07);}
+.logo{width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,#9a6f18,#d4a830);display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:13px;color:#050b16;flex-shrink:0;}
+.card-body{padding:26px 24px 32px;}
+.lbl{display:block;color:rgba(255,255,255,0.35);font-size:10px;font-family:sans-serif;text-transform:uppercase;letter-spacing:0.12em;margin-bottom:10px;margin-top:20px;}
+input[type=text],input[type=password],textarea{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:14px 16px;color:#ede8da;font-size:14px;font-family:monospace;transition:border-color 0.2s;}
+.pbtn{width:100%;background:linear-gradient(135deg,#9a6f18,#d4a830);border:none;border-radius:11px;padding:16px 24px;color:#050b16;font-weight:bold;font-size:15px;font-family:sans-serif;margin-top:18px;}
+.pbtn:disabled{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.2);cursor:not-allowed;filter:none;}
+.sbtn{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:14px 18px;color:rgba(255,255,255,0.4);font-size:13px;font-family:sans-serif;}
+.dz{border:2px dashed rgba(255,255,255,0.12);border-radius:14px;padding:40px 20px;text-align:center;cursor:pointer;transition:all 0.2s;background:rgba(255,255,255,0.015);}
+.err{margin-top:14px;background:rgba(255,65,65,0.07);border:1px solid rgba(255,65,65,0.2);border-radius:9px;padding:11px 15px;color:#ff7575;font-size:13px;font-family:sans-serif;display:none;}
+.info{background:rgba(212,168,48,0.08);border:1px solid rgba(212,168,48,0.2);border-radius:12px;padding:16px 18px;color:#d4a830;font-family:sans-serif;font-size:13px;line-height:1.7;margin-bottom:22px;}
+.badge{display:inline-block;color:rgba(93,212,154,0.8);font-size:11px;font-family:sans-serif;background:rgba(93,212,154,0.08);border:1px solid rgba(93,212,154,0.2);border-radius:20px;padding:3px 12px;}
+textarea{resize:vertical;line-height:1.8;}
+.step{display:none;}
+.step.active{display:block;animation:fadeUp 0.3s ease;}
+.csec{display:none;padding:65px 24px;flex-direction:column;align-items:center;gap:14px;text-align:center;}
+.csec.active{display:flex;}
+#connected-bar{width:100%;background:rgba(93,212,154,0.07);border-bottom:1px solid rgba(93,212,154,0.2);padding:13px 28px;display:none;align-items:center;gap:10;}
+</style>
+</head>
+<body>
+
+<div id="connected-bar">
+  <span style="width:9px;height:9px;border-radius:50%;background:#5dd49a;display:inline-block;"></span>
+  <span style="color:#5dd49a;font-family:sans-serif;font-size:14px;font-weight:bold;">✓ Gmail Connected — sam@career-growth.co ready to send</span>
+  <button onclick="disconnect()" style="margin-left:auto;background:transparent;border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:4px 10px;color:rgba(255,255,255,0.3);font-size:11px;font-family:sans-serif;">Disconnect</button>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <div class="logo">CG</div>
+    <div>
+      <div style="color:#ede8da;font-size:15px;font-weight:bold;">Follow-Up Automation</div>
+      <div style="color:rgba(255,255,255,0.3);font-size:11px;font-family:monospace;margin-top:2px;">career-growth.co · sam@career-growth.co</div>
+    </div>
+  </div>
+
+  <!-- SETUP STEP -->
+  <div id="step-setup" class="step active card-body">
+    <div class="info">
+      <strong>One-time setup — enter your API keys below:</strong><br><br>
+      <strong>Anthropic API Key:</strong> Get from <a href="https://console.anthropic.com" target="_blank" style="color:#f0c840;">console.anthropic.com</a> → API Keys → Create Key<br><br>
+      <strong>Gmail Token:</strong> Get from <a href="https://developers.google.com/oauthplayground" target="_blank" style="color:#f0c840;">OAuth Playground</a> → Gmail API v1 → gmail.send → Authorize → Exchange → copy Access token
+    </div>
+    <label class="lbl" style="margin-top:0;">Anthropic API Key</label>
+    <input type="password" id="anthropic-key" placeholder="sk-ant-api03-..."/>
+    <label class="lbl">Gmail Access Token</label>
+    <textarea id="token-input" rows="2" placeholder="ya29.a0AQv..." style="font-size:12px;"></textarea>
+    <div id="setup-err" class="err"></div>
+    <button class="pbtn" onclick="connectAll()">✉ Connect & Start →</button>
+  </div>
+
+  <!-- UPLOAD STEP -->
+  <div id="step-upload" class="step card-body">
+    <label class="lbl" style="margin-top:0;">Candidate Resume — PDF or Word (.docx)</label>
+    <div class="dz" id="dropzone" onclick="document.getElementById('file-input').click()">
+      <input type="file" id="file-input" accept="application/pdf,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" style="display:none" onchange="handleFile(this)">
+      <div id="dz-empty">
+        <div style="font-size:30px;margin-bottom:10px;opacity:0.2;">⬆</div>
+        <div style="color:rgba(255,255,255,0.5);font-size:15px;font-family:sans-serif;margin-bottom:5px;">Click to upload resume</div>
+        <div style="color:rgba(255,255,255,0.2);font-size:12px;font-family:sans-serif;">PDF or Word (.docx) · email auto-extracted</div>
+      </div>
+      <div id="dz-filled" style="display:none;">
+        <div id="dz-icon" style="font-size:36px;margin-bottom:8px;">📄</div>
+        <div id="dz-name" style="color:#5dd49a;font-size:14px;font-family:sans-serif;font-weight:bold;margin-bottom:6px;"></div>
+        <div id="dz-badge" class="badge">PDF ready ✓</div>
+        <div style="color:rgba(255,255,255,0.2);font-size:11px;margin-top:8px;font-family:sans-serif;">Click to change</div>
+      </div>
+    </div>
+    <div id="upload-err" class="err"></div>
+    <button class="pbtn" id="gen-btn" onclick="generateEmail()" disabled>Generate Personalized Email →</button>
+  </div>
+
+  <!-- GENERATING -->
+  <div id="step-generating" class="csec">
+    <div class="spinner"></div>
+    <div style="color:#ede8da;font-size:16px;font-family:sans-serif;font-weight:bold;">Generating email...</div>
+    <div style="color:rgba(255,255,255,0.3);font-size:13px;font-family:sans-serif;line-height:1.9;">Reading resume · Matching client case · Writing copy</div>
+  </div>
+
+  <!-- REVIEW -->
+  <div id="step-review" class="step card-body">
+    <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,0.06);margin-bottom:4px;">
+      <div style="color:#5dd49a;font-size:14px;font-family:sans-serif;font-weight:bold;">✓ Email Ready</div>
+      <div style="color:rgba(255,255,255,0.3);font-size:12px;font-family:sans-serif;">Edit anything below</div>
+    </div>
+    <label class="lbl">To</label>
+    <input type="text" id="to-email" placeholder="candidate@email.com"/>
+    <label class="lbl">Subject</label>
+    <input type="text" id="subject"/>
+    <label class="lbl">Email Body</label>
+    <textarea id="body" style="min-height:360px;font-size:12px;"></textarea>
+    <div id="review-err" class="err"></div>
+    <div style="display:flex;gap:10px;margin-top:16px;">
+      <button class="sbtn" onclick="resetUpload()">← New</button>
+      <button class="pbtn" onclick="sendEmail()" style="flex:1;margin-top:0;">Send from sam@career-growth.co →</button>
+    </div>
+  </div>
+
+  <!-- SENDING -->
+  <div id="step-sending" class="csec">
+    <div class="spinner"></div>
+    <div style="color:#ede8da;font-size:16px;font-family:sans-serif;font-weight:bold;">Sending...</div>
+    <div style="color:rgba(255,255,255,0.3);font-size:12px;font-family:sans-serif;">via sam@career-growth.co</div>
+  </div>
+
+  <!-- DONE -->
+  <div id="step-done" class="csec">
+    <div style="width:64px;height:64px;border-radius:50%;background:rgba(93,212,154,0.08);border:2px solid #5dd49a;display:flex;align-items:center;justify-content:center;font-size:28px;color:#5dd49a;margin:0 auto;">✓</div>
+    <div style="color:#ede8da;font-size:20px;font-family:sans-serif;font-weight:bold;">Email Sent!</div>
+    <div id="sent-to" style="color:rgba(255,255,255,0.4);font-size:14px;font-family:sans-serif;margin-bottom:8px;"></div>
+    <button class="pbtn" style="width:auto;padding:14px 28px;" onclick="resetUpload()">Process Next Candidate →</button>
+  </div>
+</div>
+
+<script>
+let anthropicKey = "";
+let gmailToken = "";
+let resumeBase64 = null;
+let resumeText = null;
+let fileType = null;
+
+const CLIENT_CASES = [
+  "https://career-growth.co/ken-chan-resume/",
+  "https://career-growth.co/jennifer-l-fletcher-resume/",
+  "https://career-growth.co/sam-rood-resume",
+  "https://career-growth.co/christine-noel-resume/",
+  "https://career-growth.co/garrett-d-thomas/"
+];
+
+const SIGNATURE = "Regards,\nSam Oke\nFounder & Senior Recruiter, Career-Growth.co | Your Sure Way to Generate at least 3 face-to-face interviews in the next 30 days!\nO: 877-468-8119";
+
+function show(id){
+  document.querySelectorAll('.step,.csec').forEach(el=>el.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function showErr(id,msg){const el=document.getElementById(id);el.textContent=msg;el.style.display='block';}
+function hideErr(id){document.getElementById(id).style.display='none';}
+
+function connectAll(){
+  const ak = document.getElementById('anthropic-key').value.trim();
+  const gt = document.getElementById('token-input').value.trim();
+  if(!ak){showErr('setup-err','Please enter your Anthropic API key.');return;}
+  if(!gt){showErr('setup-err','Please enter your Gmail access token.');return;}
+  anthropicKey = ak;
+  gmailToken = gt;
+  // Save to sessionStorage so page refresh doesn't lose them
+  sessionStorage.setItem('ak', ak);
+  sessionStorage.setItem('gt', gt);
+  hideErr('setup-err');
+  document.getElementById('connected-bar').style.display='flex';
+  show('step-upload');
+}
+
+function disconnect(){
+  anthropicKey=""; gmailToken="";
+  sessionStorage.clear();
+  document.getElementById('connected-bar').style.display='none';
+  show('step-setup');
+}
+
+function resetUpload(){
+  resumeBase64=null;resumeText=null;fileType=null;
+  document.getElementById('file-input').value="";
+  document.getElementById('dz-empty').style.display='block';
+  document.getElementById('dz-filled').style.display='none';
+  document.getElementById('gen-btn').disabled=true;
+  hideErr('upload-err');
+  show('step-upload');
+}
+
+async function handleFile(input){
+  const file=input.files[0];if(!file)return;
+  resumeBase64=null;resumeText=null;fileType=null;
+  hideErr('upload-err');
+  const isPdf=file.type==="application/pdf"||file.name.endsWith(".pdf");
+  const isDocx=file.name.endsWith(".docx")||file.type.includes("wordprocessingml");
+  document.getElementById('dz-name').textContent=file.name;
+  document.getElementById('dz-empty').style.display='none';
+  document.getElementById('dz-filled').style.display='block';
+  if(isPdf){
+    fileType="pdf";
+    document.getElementById('dz-icon').textContent="📄";
+    document.getElementById('dz-badge').textContent="PDF ready ✓";
+    const reader=new FileReader();
+    reader.onload=()=>{resumeBase64=reader.result.split(",")[1];document.getElementById('gen-btn').disabled=false;};
+    reader.readAsDataURL(file);
+  }else if(isDocx){
+    fileType="docx";
+    document.getElementById('dz-icon').textContent="📝";
+    document.getElementById('dz-badge').textContent="Extracting...";
+    try{
+      const ab=await file.arrayBuffer();
+      const result=await mammoth.extractRawText({arrayBuffer:ab});
+      resumeText=result.value;
+      document.getElementById('dz-badge').textContent="Word extracted ✓";
+      document.getElementById('gen-btn').disabled=false;
+    }catch(e){showErr('upload-err','Could not read Word file: '+e.message);}
+  }else{showErr('upload-err','Please upload PDF or Word (.docx) only.');}
+}
+
+async function generateEmail(){
+  show('step-generating');
+  const userPrompt=`Write a Day 5 follow-up email for this candidate.
+STEP 1: Extract first name, email address, core skill from resume.
+STEP 2: Choose ONE best matching client case:
+- Regional Lead — J.P. Morgan: ${CLIENT_CASES[0]}
+- Bid Manager — Accenture: ${CLIENT_CASES[1]}
+- Customer Success Manager (Remote) — DocuSign: ${CLIENT_CASES[2]}
+- Coca-Cola — Manager: ${CLIENT_CASES[3]}
+- Project Manager — Boeing: ${CLIENT_CASES[4]}
+STEP 3: Write the email:
+- Subject: first name + core skill, executive tone
+- "Hi [First Name],"
+- One thing became very clear reviewing background (bold it)
+- Under-positioned — hiring teams focus too narrowly
+- 5-7 bullets: what background demonstrates
+- Selected client FULL NAME + company, similar challenge
+- 4 bullets: what was emphasized after repositioning
+- 5 bullets: comparable indicators in resume
+- Add EXACTLY: **You may find it helpful to review the full resume here (including contact information and the updated title they secured & Your Remote Interview Package):** [INSERT EXACT SELECTED CLIENT RESUME LINK]
+- Why reviewing immediately matters
+- "Your Remote Interview Package is currently available for a $147 one-time investment. I stand behind this process completely: If, by June 18, 2026, you do not experience a 60% raise, I will refund your investment."
+- "Your Remote Interview Package expired before 11:59 PM PT today."
+- End with EXACTLY:
+${SIGNATURE}
+RESPOND ONLY:
+EMAIL: [email]
+SUBJECT: [subject]
+---
+[body starting Hi [Name],]`;
+
+  try{
+    const messageContent=fileType==="pdf"
+      ?[{type:"document",source:{type:"base64",media_type:"application/pdf",data:resumeBase64}},{type:"text",text:userPrompt}]
+      :[{type:"text",text:`CANDIDATE RESUME:\n\n${resumeText}\n\n---\n\n${userPrompt}`}];
+
+    const response=await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+        "x-api-key":anthropicKey,
+        "anthropic-version":"2023-06-01",
+        "anthropic-dangerous-allow-cors":"true"
+      },
+      body:JSON.stringify({
+        model:"claude-sonnet-4-20250514",
+        max_tokens:1500,
+        system:"You are Sam Oke, Founder & Senior Recruiter at Career-Growth.co — 12 years experience, 3,400+ candidates, $280M+ combined career fortune. Write psychologically intelligent follow-up emails. Tone: calm, senior-advisor, peer-to-peer, evidence-based. No hype. Executive tone. Don't repeat subject line in body.",
+        messages:[{role:"user",content:messageContent}]
+      }),
+    });
+    const data=await response.json();
+    if(data.error)throw new Error(data.error.message);
+    const fullText=data.content.map(b=>b.text||"").join("\n");
+    const em=fullText.match(/^EMAIL:\s*(.+)/m);
+    const sm=fullText.match(/^SUBJECT:\s*(.+)/m);
+    const bm=fullText.match(/---\n([\s\S]+)/);
+    if(em)document.getElementById('to-email').value=em[1].trim();
+    if(sm)document.getElementById('subject').value=sm[1].trim();
+    if(bm)document.getElementById('body').value=bm[1].trim();
+    show('step-review');
+  }catch(e){
+    showErr('upload-err','Generation failed: '+e.message);
+    show('step-upload');
+  }
+}
+
+async function sendEmail(){
+  const toEmail=document.getElementById('to-email').value.trim();
+  const subject=document.getElementById('subject').value.trim();
+  const body=document.getElementById('body').value.trim();
+  if(!toEmail){showErr('review-err','No recipient email. Enter manually.');return;}
+  hideErr('review-err');
+  show('step-sending');
+  try{
+    const lines=[`From: Sam Oke <sam@career-growth.co>`,`To: ${toEmail}`,`Subject: ${subject}`,`Content-Type: text/plain; charset=UTF-8`,``,body];
+    const raw=btoa(unescape(encodeURIComponent(lines.join("\r\n")))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+    const resp=await fetch("https://gmail.googleapis.com/gmail/v1/users/me/messages/send",{
+      method:"POST",
+      headers:{Authorization:`Bearer ${gmailToken}`,"Content-Type":"application/json"},
+      body:JSON.stringify({raw}),
+    });
+    if(!resp.ok){const err=await resp.json();throw new Error(err.error?.message||"Send failed");}
+    document.getElementById('sent-to').textContent="Delivered to "+toEmail;
+    show('step-done');
+  }catch(e){
+    showErr('review-err','Send failed: '+e.message);
+    show('step-review');
+  }
+}
+
+// Restore session if available
+window.onload=()=>{
+  const ak=sessionStorage.getItem('ak');
+  const gt=sessionStorage.getItem('gt');
+  if(ak&&gt){
+    anthropicKey=ak; gmailToken=gt;
+    document.getElementById('connected-bar').style.display='flex';
+    show('step-upload');
+  }
+};
+</script>
+</body>
+</html>
